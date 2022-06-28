@@ -1,0 +1,22 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel ComputeHeatmap
+
+// General
+RWTexture2D<float4> heatmap;
+RWStructuredBuffer<int> heat;
+uint rows; 
+uint cols;
+uint maxVal;
+
+[numthreads(512,1,1)]
+void ComputeHeatmap(uint3 id : SV_DispatchThreadID) {
+    // heatmap[id.xy] = float4((float)id.x / rows, (float)id.y / cols, 0, 1.0);
+
+    int val = heat[id.y * cols + id.x];
+    float ratio = (float)val / maxVal;
+    float r = ratio;
+    // float g = max(1f, min(0f, ratio - 1f));
+    // float b = max(1f, min(0f, ratio - 2f));
+    heatmap[id.xy] = float4(r, 0, 0, 1.0);
+
+}
